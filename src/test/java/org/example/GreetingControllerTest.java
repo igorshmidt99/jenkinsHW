@@ -1,28 +1,41 @@
 package org.example;
 
-import org.junit.jupiter.api.AfterEach;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith
+@SpringJUnitWebConfig(WebConfig.class)
 class GreetingControllerTest {
 
-    @Mock
-    private GreetingService service;
+    private ObjectMapper mapper = new ObjectMapper();
+
+    private GreetingDto dto;
+
+    private MockMvc mockMvc;
 
     @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
+    void setUp(WebApplicationContext webApplicationContext) {
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(webApplicationContext)
+                .build();
+        dto = new GreetingDto("Privet, Vova!");
     }
 
     @Test
-    void getGreeting() {
+    void getGreeting() throws Exception {
+        mockMvc.perform(get("/hello")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value(dto.getMessage()));
     }
 }
