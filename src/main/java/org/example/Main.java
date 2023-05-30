@@ -9,7 +9,7 @@ public class Main {
 
     public static void main(String[] args) throws LifecycleException {
         var tomcat = new Tomcat();
-        tomcat.getConnector().setPort(8080);
+        tomcat.getConnector().setPort(8081);
         var tomcatContext = tomcat.addContext("", null);
 
         var context = new AnnotationConfigWebApplicationContext();
