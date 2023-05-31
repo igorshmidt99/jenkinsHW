@@ -18,4 +18,5 @@ public class GreetingController {
     public GreetingDto getGreeting() {
         return greetingService.getGreeting();
     }
+
 }
